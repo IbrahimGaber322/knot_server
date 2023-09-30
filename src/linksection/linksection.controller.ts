@@ -16,7 +16,7 @@ import { Linksection } from './schemas/linksection.schema';
 import { LinksectionService } from './linksection.service';
 import { CreateLinksectionDto } from './dto/create-linksection.dto';
 import { UpdateLinksectionDto } from './dto/update-linksection.dto';
-@Controller('linksection')
+@Controller('linksections')
 export class LinksectionController {
   constructor(private linksectionService: LinksectionService) {}
 
@@ -28,14 +28,10 @@ export class LinksectionController {
     return this.linksectionService.findAll(query);
   }
 
-  @Get('user/:id')
+  @Get('/user')
   @UseGuards(AuthGuard())
-  async getLinksectionsByUser(
-    @Query() query: ExpressQuery,
-    @Param('id')
-    id: string,
-  ): Promise<Linksection[]> {
-    return this.linksectionService.findLinksectionsByUser(id, query);
+  async getLinksectionsByUser(@Req() req): Promise<Linksection[]> {
+    return this.linksectionService.findLinksectionsByUser(req.user);
   }
 
   @Post()
@@ -48,7 +44,7 @@ export class LinksectionController {
     return this.linksectionService.create(linksection, req.user);
   }
 
-  @Get(':id')
+  @Get('/linksection/:id')
   @UseGuards(AuthGuard())
   async getLinksection(
     @Param('id')

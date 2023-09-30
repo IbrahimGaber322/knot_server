@@ -36,13 +36,19 @@ export class ProductController {
     return this.productService.create(product, req.user);
   }
 
-  @Get(':id')
+  @Get('/product/:id')
   @UseGuards(AuthGuard())
   async getProduct(
     @Param('id')
     id: string,
   ): Promise<Product> {
     return this.productService.findById(id);
+  }
+
+  @Get('/user')
+  @UseGuards(AuthGuard())
+  async getProductsByUser(@Req() req): Promise<Product[]> {
+    return this.productService.findProductsByUser(req.user);
   }
 
   @Put(':id')

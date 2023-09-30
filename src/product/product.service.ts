@@ -9,6 +9,8 @@ import { Product } from './schemas/product.schema';
 import mongoose from 'mongoose';
 import { Query } from 'express-serve-static-core';
 import { User } from 'src/auth/schemas/user.schema';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 @Injectable()
 export class ProductService {
   constructor(
@@ -36,8 +38,14 @@ export class ProductService {
     return products;
   }
 
-  async create(product: Product, user: User): Promise<Product> {
+  async create(product: CreateProductDto, user: User): Promise<Product> {
+    const isValidId = mongoose.isValidObjectId(user._id);
+    if (!isValidId) {
+      throw new BadRequestException('Please enter correct id.');
+    }
+    console.log(user._id);
     const data = Object.assign(product, { ownerId: user._id });
+    console.log(data);
     const res = await this.productModel.create(data);
     return res;
   }
@@ -54,8 +62,12 @@ export class ProductService {
     return product;
   }
 
-  async updateById(id: string, product: Product, user: User): Promise<Product> {
-    if (user._id !== product.ownerId) {
+  async updateById(
+    id: string,
+    product: UpdateProductDto,
+    user: User,
+  ): Promise<Product> {
+    if (user._id !== id) {
       throw new UnauthorizedException("You can't edit this product");
     }
     return await this.productModel.findByIdAndUpdate(id, product, {
@@ -70,5 +82,13 @@ export class ProductService {
       throw new UnauthorizedException("You can't edit this product");
     }
     return await this.productModel.findByIdAndDelete(id);
+  }
+
+  async findProductsByUser(user: User): Promise<Product[]> {
+    const products = await this.productModel.find({
+      ownerId: user._id,
+    });
+
+    return products;
   }
 }

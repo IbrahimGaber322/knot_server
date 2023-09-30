@@ -16,7 +16,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Link } from './schemas/link.schema';
 import { CreateLinkDto } from './dto/create-link.dto';
 import { UpdateLinkDto } from './dto/update-link.dto';
-@Controller('link')
+@Controller('links')
 export class LinkController {
   constructor(private linkService: LinkService) {}
 
@@ -26,14 +26,13 @@ export class LinkController {
     return this.linkService.findAll(query);
   }
 
-  @Get('linksection/:id')
+  @Get('/section/:id')
   @UseGuards(AuthGuard())
-  async getSectionLinks(
-    @Query() query: ExpressQuery,
+  async getLinks(
     @Param('id')
     id: string,
   ): Promise<Link[]> {
-    return this.linkService.findLinksBySection(id, query);
+    return this.linkService.findLinksBySection(id);
   }
 
   @Post()
@@ -46,7 +45,7 @@ export class LinkController {
     return this.linkService.create(link, req.user);
   }
 
-  @Get(':id')
+  @Get('/link/:id')
   @UseGuards(AuthGuard())
   async getLink(
     @Param('id')

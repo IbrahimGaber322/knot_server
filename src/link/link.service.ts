@@ -10,6 +10,7 @@ import mongoose from 'mongoose';
 import { Query } from 'express-serve-static-core';
 import { User } from 'src/auth/schemas/user.schema';
 import { Link } from './schemas/link.schema';
+import { CreateLinkDto } from './dto/create-link.dto';
 
 @Injectable()
 export class LinkService {
@@ -38,30 +39,21 @@ export class LinkService {
     return links;
   }
 
-  async findLinksBySection(id: string, query: Query): Promise<Link[]> {
-    const resPerPage = 2;
-    const currentPage = Number(query.page) || 1;
-    const skip = resPerPage * (currentPage - 1);
+  async findLinksBySection(id: string): Promise<Link[]> {
+    console.log(id);
+    const isValidId = mongoose.isValidObjectId(id);
+    if (!isValidId) {
+      throw new BadRequestException('Please enter correct id.');
+    }
+    const links = await this.linkModel.find({
+      sectionId: id,
+    });
 
-    const keyword = query.keyword
-      ? {
-          label: {
-            $regex: query.keyword,
-            $options: 'i',
-          },
-        }
-      : {};
-    const links = await this.linkModel
-      .find({
-        ...keyword,
-        sectionId: id,
-      })
-      .limit(resPerPage)
-      .skip(skip);
     return links;
   }
 
-  async create(link: Link, user: User): Promise<Link> {
+  async create(link: CreateLinkDto, user: User): Promise<Link> {
+    console.log('create link');
     const data = Object.assign(link, { userId: user._id });
     const res = await this.linkModel.create(data);
     return res;

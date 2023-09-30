@@ -6,6 +6,7 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { SignUpDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
+import { UpdateDto } from './dto/update.dto';
 @Injectable()
 export class AuthService {
   constructor(
@@ -43,5 +44,28 @@ export class AuthService {
 
     const token = this.jwtService.sign({ id: user._id });
     return { token };
+  }
+
+  async getUser(user: User): Promise<{ user: User }> {
+    const foundUser = await this.userModel
+      .findById(user._id)
+      .select('-password');
+    if (!user) {
+      throw new UnauthorizedException('Invalid token');
+    }
+    return { user: foundUser };
+  }
+
+  async updateUser(user: User, updateDto: UpdateDto): Promise<{ user: User }> {
+    const updatedUser = await this.userModel.findByIdAndUpdate(
+      user._id,
+      updateDto,
+      { new: true },
+    );
+
+    if (!updatedUser) {
+      throw new UnauthorizedException('Invalid token');
+    }
+    return { user: updatedUser };
   }
 }

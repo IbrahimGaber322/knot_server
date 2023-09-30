@@ -10,6 +10,8 @@ import mongoose from 'mongoose';
 import { Query } from 'express-serve-static-core';
 import { User } from 'src/auth/schemas/user.schema';
 import { Linksection } from './schemas/linksection.schema';
+import { CreateLinksectionDto } from './dto/create-linksection.dto';
+import { UpdateLinksectionDto } from './dto/update-linksection.dto';
 
 @Injectable()
 export class LinksectionService {
@@ -38,33 +40,18 @@ export class LinksectionService {
     return linksections;
   }
 
-  async findLinksectionsByUser(
-    id: string,
-    query: Query,
-  ): Promise<Linksection[]> {
-    const resPerPage = 2;
-    const currentPage = Number(query.page) || 1;
-    const skip = resPerPage * (currentPage - 1);
+  async findLinksectionsByUser(user: User): Promise<Linksection[]> {
+    const linksections = await this.linksectionModel.find({
+      userId: user._id,
+    });
 
-    const keyword = query.keyword
-      ? {
-          label: {
-            $regex: query.keyword,
-            $options: 'i',
-          },
-        }
-      : {};
-    const linksections = await this.linksectionModel
-      .find({
-        ...keyword,
-        userId: id,
-      })
-      .limit(resPerPage)
-      .skip(skip);
     return linksections;
   }
 
-  async create(linksection: Linksection, user: User): Promise<Linksection> {
+  async create(
+    linksection: CreateLinksectionDto,
+    user: User,
+  ): Promise<Linksection> {
     const data = Object.assign(linksection, { userId: user._id });
     const res = await this.linksectionModel.create(data);
     return res;
@@ -84,10 +71,11 @@ export class LinksectionService {
 
   async updateById(
     id: string,
-    linksection: Linksection,
+    linksection: UpdateLinksectionDto,
     user: User,
   ): Promise<Linksection> {
-    if (user._id !== linksection.userId) {
+    const foundLinkSection = await this.linksectionModel.findById(id);
+    if (user._id !== foundLinkSection.userId) {
       throw new UnauthorizedException("You can't edit this linksection.");
     }
     return await this.linksectionModel.findByIdAndUpdate(id, linksection, {

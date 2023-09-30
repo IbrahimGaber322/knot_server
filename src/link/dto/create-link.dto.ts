@@ -1,13 +1,7 @@
-import { User } from 'src/auth/schemas/user.schema';
-
 import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Linksection } from 'src/linksection/schemas/linksection.schema';
 
 export class CreateLinkDto {
-  @IsNotEmpty()
-  @IsString()
-  readonly userId: User;
-
   @IsNotEmpty()
   @IsString()
   readonly sectionId: Linksection;
