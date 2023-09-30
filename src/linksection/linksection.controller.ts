@@ -28,6 +28,16 @@ export class LinksectionController {
     return this.linksectionService.findAll(query);
   }
 
+  @Get('user/:id')
+  @UseGuards(AuthGuard())
+  async getLinksectionsByUser(
+    @Query() query: ExpressQuery,
+    @Param('id')
+    id: string,
+  ): Promise<Linksection[]> {
+    return this.linksectionService.findLinksectionsByUser(id, query);
+  }
+
   @Post()
   @UseGuards(AuthGuard())
   async createLinksection(

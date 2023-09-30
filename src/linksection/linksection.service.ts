@@ -38,6 +38,32 @@ export class LinksectionService {
     return linksections;
   }
 
+  async findLinksectionsByUser(
+    id: string,
+    query: Query,
+  ): Promise<Linksection[]> {
+    const resPerPage = 2;
+    const currentPage = Number(query.page) || 1;
+    const skip = resPerPage * (currentPage - 1);
+
+    const keyword = query.keyword
+      ? {
+          label: {
+            $regex: query.keyword,
+            $options: 'i',
+          },
+        }
+      : {};
+    const linksections = await this.linksectionModel
+      .find({
+        ...keyword,
+        userId: id,
+      })
+      .limit(resPerPage)
+      .skip(skip);
+    return linksections;
+  }
+
   async create(linksection: Linksection, user: User): Promise<Linksection> {
     const data = Object.assign(linksection, { userId: user._id });
     const res = await this.linksectionModel.create(data);
