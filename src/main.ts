@@ -4,11 +4,12 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const PORT = process.env.PORT || 5000;
+  const FRONTEND_URL = process.env.FRONTEND;
   const app = await NestFactory.create(AppModule, {
     bodyParser: true,
   });
   app.enableCors({
-    origin: '*',
+    origin: ['*', FRONTEND_URL],
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: '*',
     preflightContinue: false,
