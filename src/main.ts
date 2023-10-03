@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-
+import { urlencoded, json } from 'express';
 async function bootstrap() {
   const PORT = process.env.PORT || 5000;
   const FRONTEND_URL = process.env.FRONTEND;
@@ -15,6 +15,8 @@ async function bootstrap() {
     allowedHeaders:
       'Origin, X-Requested-With, Content-Type, Accept, Authentication, Authorization, Access-control-allow-credentials, Access-control-allow-headers, Access-control-allow-methods, Access-control-allow-origin, User-Agent, Referer, Accept-Encoding, Accept-Language, Access-Control-Request-Headers, Cache-Control, Pragma',
   });
+  app.use(json({ limit: '50mb' }));
+  app.use(urlencoded({ extended: true, limit: '50mb' }));
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(PORT);
 }

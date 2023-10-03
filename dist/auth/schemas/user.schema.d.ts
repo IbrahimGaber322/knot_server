@@ -32,6 +32,7 @@ export declare enum UserType {
 export declare class User extends Document {
     fullName: string;
     username: string;
+    image: string;
     password: string;
     bio: string;
     fcmTokens: string[];

@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@nestjs/core");
 const app_module_1 = require("./app.module");
 const common_1 = require("@nestjs/common");
+const express_1 = require("express");
 async function bootstrap() {
     const PORT = process.env.PORT || 5000;
     const FRONTEND_URL = process.env.FRONTEND;
@@ -15,6 +16,8 @@ async function bootstrap() {
         credentials: true,
         allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authentication, Authorization, Access-control-allow-credentials, Access-control-allow-headers, Access-control-allow-methods, Access-control-allow-origin, User-Agent, Referer, Accept-Encoding, Accept-Language, Access-Control-Request-Headers, Cache-Control, Pragma',
     });
+    app.use((0, express_1.json)({ limit: '50mb' }));
+    app.use((0, express_1.urlencoded)({ extended: true, limit: '50mb' }));
     app.useGlobalPipes(new common_1.ValidationPipe());
     await app.listen(PORT);
 }

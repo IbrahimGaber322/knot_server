@@ -47,4 +47,7 @@ export class SignUpDto {
   @IsOptional()
   @IsEnum(UserType, { message: 'Please enter correct user type.' })
   readonly type: UserType;
+  @IsOptional()
+  @IsString()
+  readonly image: string;
 }

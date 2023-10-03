@@ -12,4 +12,5 @@ export declare class UpdateDto {
     readonly emails: string[];
     readonly phones: string[];
     readonly type: UserType;
+    readonly image: string;
 }

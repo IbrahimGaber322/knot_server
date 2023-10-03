@@ -76,4 +76,9 @@ __decorate([
     (0, class_validator_1.IsEnum)(user_schema_1.UserType, { message: 'Please enter correct user type.' }),
     __metadata("design:type", String)
 ], SignUpDto.prototype, "type", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], SignUpDto.prototype, "image", void 0);
 //# sourceMappingURL=signup.dto.js.map
